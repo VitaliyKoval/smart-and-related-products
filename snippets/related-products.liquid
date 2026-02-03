@@ -1,0 +1,60 @@
+{% assign source_collection = blank %}
+
+{% if product.metafields.custom.related_collection != blank %}
+  {% assign source_collection = product.metafields.custom.related_collection.value %}
+{% elsif product.collections.first %}
+  {% assign source_collection = product.collections.first %}
+{% endif %}
+
+{% if source_collection != blank %}
+  {% assign limit = limit | default: 4 %}
+  {% assign shown = 0 %}
+
+  <div class="related-products">
+    <h2 class="related-products__title">Related Products</h2>
+
+    <div class="related-products__grid">
+      {% for related_product in source_collection.products %}
+        {% if related_product.id == product.id %}
+          {% continue %}
+        {% endif %}
+
+        {% if shown >= limit %}
+          {% break %}
+        {% endif %}
+
+        <div class="related-products__card">
+          <a href="{{ related_product.url }}" class="related-products__link">
+            <div class="related-products__image">
+              {% if related_product.featured_image %}
+                <img
+                  src="{{ related_product.featured_image | image_url: width: 400 }}"
+                  alt="{{ related_product.featured_image.alt | escape }}"
+                  loading="lazy"
+                  width="250"
+                  height="250"
+                >
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag: 'placeholder-svg' }}
+              {% endif %}
+            </div>
+
+            <h3 class="related-products__product-title">
+              {{ related_product.title }}
+            </h3>
+
+            <div class="related-products__price">
+              {% if related_product.price_varies %}
+                {{ related_product.price_min | money }} – {{ related_product.price_max | money }}
+              {% else %}
+                {{ related_product.price | money }}
+              {% endif %}
+            </div>
+          </a>
+        </div>
+
+        {% assign shown = shown | plus: 1 %}
+      {% endfor %}
+    </div>
+  </div>
+{% endif %}

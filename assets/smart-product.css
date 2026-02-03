@@ -1,0 +1,153 @@
+.smart-product {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.smart-product__gallery {
+  position: relative;
+}
+
+.smart-product__gallery img {
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+}
+
+.smart-product__sale-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #e74c3c;
+  color: white;
+  padding: 5px 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  z-index: 10;
+}
+
+.smart-product__info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.smart-product__title {
+  font-size: 32px;
+  margin: 0;
+}
+
+.smart-product__description {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.smart-product__price {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.smart-product__price--compare {
+  text-decoration: line-through;
+  color: #999;
+  font-size: 18px;
+  margin-left: 10px;
+}
+
+.smart-product__availability {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.smart-product__availability--in-stock {
+  background: #d4edda;
+  color: #155724;
+}
+
+.smart-product__availability--pre-order {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.smart-product__availability--out-of-stock {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.smart-product__limited-stock {
+  background: #17a2b8;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-top: 10px;
+  display: inline-block;
+}
+
+.smart-product__variant-selector select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.smart-product__form {
+  margin-top: 20px;
+}
+
+.smart-product__submit {
+  width: 100%;
+  padding: 16px;
+  background: #333;
+  color: white;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.smart-product__submit:hover {
+  background: #555;
+}
+
+.smart-product__submit:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.smart-product__usp-list {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.smart-product__usp-list h3 {
+  margin: 0 0 15px 0;
+  font-size: 18px;
+}
+
+.smart-product__usp-list ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.smart-product__usp-list li {
+  margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+  .smart-product {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,198 @@
+{{ 'smart-product.css' | asset_url | stylesheet_tag }}
+{{ 'related-products.css' | asset_url | stylesheet_tag }}
+
+<div class="smart-product">
+  <div class="smart-product__gallery">
+    {% assign product = collections.all.products | where: 'available', true | first %}
+    {%- assign main_image = product.selected_or_first_available_variant.image | default: product.featured_image -%}
+    <img
+      src="{{ main_image | image_url: width: 800 }}"
+      alt="{{ product.title }}"
+      loading="eager"
+      fetchpriority="high"
+      width="{{ main_image.width }}"
+      height="{{ main_image.height }}"
+    >
+
+    {%- if product.selected_or_first_available_variant.compare_at_price
+        > product.selected_or_first_available_variant.price
+    -%}
+      <span class="smart-product__sale-badge">{{ 'sections.smart_product.sale_badge' | t }}</span>
+    {%- endif -%}
+  </div>
+
+  <div class="smart-product__info">
+    {%- if section.settings.show_vendor and product.vendor != blank -%}
+      <p class="smart-product__vendor">{{ product.vendor }}</p>
+    {%- endif -%}
+
+    <h1 class="smart-product__title">{{ product.title }}</h1>
+
+    <div class="smart-product__price">
+      {{ product.selected_or_first_available_variant.price | money }}
+      {%- if product.selected_or_first_available_variant.compare_at_price
+          > product.selected_or_first_available_variant.price
+      -%}
+        <span class="smart-product__price--compare">
+          {{- product.selected_or_first_available_variant.compare_at_price | money -}}
+        </span>
+      {%- endif -%}
+    </div>
+
+    <div
+      class="
+        smart-product__availability
+        {%- if product.selected_or_first_available_variant.available -%}
+          smart-product__availability--in-stock
+        {%- elsif product.selected_or_first_available_variant.inventory_policy == 'continue' -%}
+          smart-product__availability--pre-order
+        {%- else -%}
+          smart-product__availability--out-of-stock
+        {%- endif -%}
+      "
+    >
+      {%- if product.selected_or_first_available_variant.available -%}
+        {{ 'sections.smart_product.in_stock' | t }}
+      {%- elsif product.selected_or_first_available_variant.inventory_policy == 'continue' -%}
+        {{ 'sections.smart_product.pre_order' | t }}
+      {%- else -%}
+        {{ 'sections.smart_product.out_of_stock' | t }}
+      {%- endif -%}
+    </div>
+
+    {%- if product.selected_or_first_available_variant.available
+      and product.selected_or_first_available_variant.inventory_management != blank
+      and product.selected_or_first_available_variant.inventory_quantity < 5
+    -%}
+      <span class="smart-product__limited-stock">
+        {{
+          'sections.smart_product.left_count'
+          | t: count: product.selected_or_first_available_variant.inventory_quantity
+        }}
+      </span>
+    {%- endif -%}
+
+    {%- if product.description != blank -%}
+      <div class="smart-product__description">
+        {{ product.description }}
+      </div>
+    {%- endif -%}
+
+    <div class="smart-product__variant-selector">
+      {%- if product.variants.size > 1 -%}
+        <select name="id" id="variant-selector">
+          {%- for variant in product.variants -%}
+            <option
+              value="{{ variant.id }}"
+              {%- if variant == product.selected_or_first_available_variant -%}
+                selected
+              {%- endif -%}
+              data-price="{{ variant.price | money }}"
+              data-available="{{ variant.available }}"
+              data-inventory-policy="{{ variant.inventory_policy }}"
+              data-inventory-quantity="{{ variant.inventory_quantity }}"
+              data-inventory-management="{{ variant.inventory_management }}"
+            >
+              {{ variant.title }} — {{ variant.price | money }}
+            </option>
+          {%- endfor -%}
+        </select>
+      {%- endif -%}
+    </div>
+
+    {%- form 'product', product -%}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+      <button
+        type="submit"
+        class="smart-product__submit"
+        {%- unless product.selected_or_first_available_variant.available -%}
+          disabled
+        {%- endunless -%}
+      >
+        {%- if product.selected_or_first_available_variant.available -%}
+          {{ 'sections.smart_product.add_to_cart' | t }}
+        {%- elsif product.selected_or_first_available_variant.inventory_policy == 'continue' -%}
+          {{ 'sections.smart_product.pre_order_button' | t }}
+        {%- else -%}
+          {{ 'sections.smart_product.out_of_stock_button' | t }}
+        {%- endif -%}
+      </button>
+    {%- endform -%}
+
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'usp' -%}
+        <div class="smart-product__usp-list" {{ block.shopify_attributes }}>
+          <ul>
+            {%- for block in section.blocks -%}
+              {%- if block.type == 'usp' -%}
+                <li>{{ block.settings.text }}</li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </div>
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+</div>
+
+{%- render 'related-products', product: product, limit: section.settings.limit -%}
+
+{% schema %}
+{
+  "name": "Smart Product",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "default": true,
+      "label": "Show vendor"
+    },
+    {
+      "type": "range",
+      "id": "gallery_limit",
+      "min": 1,
+      "max": 8,
+      "step": 1,
+      "default": 4,
+      "label": "Gallery limit"
+    },
+    {
+      "type": "range",
+      "id": "related_limit",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "default": 4,
+      "label": "Related products limit"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "usp",
+      "name": "USP",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Smart Product",
+      "blocks": [
+        {
+          "type": "usp"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
