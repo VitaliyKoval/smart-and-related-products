@@ -12,14 +12,28 @@
     "smart_product_j6kRca": {
       "type": "smart-product",
       "blocks": {
+        "usp_qRgPwB": {
+          "type": "usp",
+          "settings": {
+            "text": "Test text"
+          }
+        },
+        "usp_nYrHCb": {
+          "type": "usp",
+          "settings": {
+            "text": "Some text"
+          }
+        },
         "usp_gJ3akG": {
           "type": "usp",
           "settings": {
-            "text": ""
+            "text": "Another text"
           }
         }
       },
       "block_order": [
+        "usp_qRgPwB",
+        "usp_nYrHCb",
         "usp_gJ3akG"
       ],
       "name": "Smart Product",
